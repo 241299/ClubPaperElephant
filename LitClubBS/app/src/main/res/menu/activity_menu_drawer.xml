@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_48dp"
+            android:title="@string/home"
+            android:checked="true"/>
+
+        <item
+            android:id="@+id/nav_publications"
+            android:icon="@drawable/ic_publications_48dp"
+            android:title="@string/publications"/>
+
+        <item android:id="@+id/nav_blog"
+            android:icon="@drawable/ic_forum_black_48dp"
+            android:title="@string/blog"/>
+
+        <item android:id="@+id/nav_writers"
+            android:icon="@drawable/ic_writers_48dp"
+            android:title="@string/writers"/>
+
+        <item android:id="@+id/nav_journal"
+            android:icon="@drawable/ic_magazine_48dp"
+            android:title="@string/journal"/>
+
+        <item android:id="@+id/nav_artists"
+            android:icon="@drawable/ic_artists_48dp"
+            android:title="@string/artists"/>
+
+        <item android:id="@+id/nav_photo"
+            android:icon="@drawable/ic_photo_library_48dp"
+            android:title="@string/photo"/>
+
+        <item android:id="@+id/nav_help"
+            android:icon="@drawable/ic_help_48dp"
+            android:title="@string/help"/>
+
+        <item android:id="@+id/nav_add"
+            android:icon="@drawable/ic_add_48dp"
+            android:title="@string/add"/>
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_48dp"
+            android:title="@string/settings" />
+    </group>
+
+    <item android:title="@string/communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/share" />
+            <item
+                android:id="@+id/nav_send_report"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/send_report" />
+        </menu>
+    </item>
+
+</menu>

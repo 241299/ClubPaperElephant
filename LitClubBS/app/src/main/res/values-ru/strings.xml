@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Бумажный Слон</string>
+    <string name="home">Главная</string>
+    <string name="communicate">Коммуникации</string>
+    <string name="gallery">Галерея</string>
+    <string name="mainText">Здесь будет какой-то текст</string>
+    <string name="send_report">Отправить отчёт</string>
+    <string name="share">Поделиться</string>
+    <string name="slideshow">Отправить</string>
+    <string name="tools">Инструменты</string>
+    <string name="logoLitClub">Литературный клуб</string>
+    <string name="logoText">Бумажный Слон</string>
+    <string name="add">Добавить</string>
+    <string name="artists">Художники</string>
+    <string name="blog">Блог</string>
+    <string name="help">Справка</string>
+    <string name="journal">Журнал</string>
+    <string name="photo">Фото</string>
+    <string name="publications">Публикации</string>
+    <string name="writers">Писателям</string>
+    <string name="settings">Настройки</string>
+    <string name="refreshStarted">Обновление…</string>
+    <string name="defaultErrorMessage">Вышла ошибка</string>
+    <string name="documentDownloadFailed">Ошибка загрузки страницы</string>
+</resources>

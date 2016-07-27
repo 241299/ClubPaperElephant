@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Кәгазь фил клубы</string>
+    <string name="home">Өй</string>
+    <string name="communicate">Аралашулар</string>
+    <string name="gallery">Күргәзмә</string>
+    <string name="logoLitClub">Әдәби клубы</string>
+    <string name="logoText">Кәгазь фил</string>
+    <string name="mainText">Монда бертөрле текст булачак</string>
+    <string name="send_report">Отчет җибәрү</string>
+    <string name="share">Бүлешү</string>
+    <string name="slideshow">Неизвестно</string>
+    <string name="tools">Хезмәт</string>
+    <string name="blog">Блог</string>
+    <string name="help">Белешмә</string>
+    <string name="artists">Рәссамнар</string>
+    <string name="add">Өстәү</string>
+    <string name="journal">Журнал</string>
+    <string name="photo">Фото</string>
+    <string name="publications">Басмалар</string>
+    <string name="writers">Язучыларга</string>
+    <string name="settings">Көйләүләр</string>
+    <string name="refreshStarted">Яңарту…</string>
+    <string name="defaultErrorMessage">Хата чыкты</string>
+    <string name="documentDownloadFailed">Бит төявендә хата чыкты</string>
+</resources>
