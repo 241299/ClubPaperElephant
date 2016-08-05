@@ -63,7 +63,9 @@ public class ImageDownloadTask {
             RoboErrorReporter.reportError(context, new IOException("Can't download an image at ImageDownloadTask"));
             RoboErrorReporter.reportError(context, e);
         }
-        return image;
+        finally {
+            return image;
+        }
     }
 
     public static Drawable downloadImage(Context context, String imageUri, ImageSize imageSize, DisplayImageOptions displayImageOptions){

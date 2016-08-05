@@ -42,9 +42,9 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     public final static int TYPE_PUBLICATIONS = 1;
     public static final int TYPE_ARTICLE = 2;
     public static final int TYPE_BLOG = 3;
-    public static final int TYPE_WRITERS = 4;
-    public static final int TYPE_PHOTOS = 5;
-    public static final int TYPE_HELP = 6;
+    public static final int TYPE_NEWS = 4;
+    public static final int TYPE_PAINTER = 5;
+    public static final int TYPE_USER = 6;
     public static final int TYPE_RESERVED0 = 7;
     public static final int TYPE_RESERVED1 = 8;
     public static final int TYPE_RESERVED2 = 9;
@@ -56,6 +56,8 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     public final static String SEPARATOR_DEFAULT = "item";
     public final static String SEPARATOR_PUBLICATIONS = "content_list_item articles_list_item";
     public final static String SEPARATOR_ARTICLE = "field ft_html f_content";
+    public final static String SEPARATOR_DUEL_ARTICLE = "field ft_html f_content2";
+    public final static String SEPARATOR_WRITERS = "content_list_item writers_list_item";
 
 
     @Override
@@ -119,7 +121,7 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             linearLayout.removeAllViews();
         }
 
-        if (typeOfPage != TYPE_ARTICLE)
+        if (typeOfPage != TYPE_ARTICLE && typeOfPage != TYPE_NEWS)
             for (int i = 0; i < e.size(); i++) {
                 final Element el = e.get(i);
                 if (el != null && el.text().length() > 1) {
@@ -137,17 +139,20 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
                         }
                     }
 
+                    /**
+                     * Различный текст в зависимости от выбранного типа страницы
+                     */
+
+                    String temp0 = "Smtxt";
+
                     //TODO ДОДЕЛАТЬ
                     switch (typeOfPage){
-                        case TYPE_DEFAULT:
-                        case TYPE_PUBLICATIONS:
-
+                        case TYPE_DEFAULT: temp0 = el.getElementsByAttributeValue("class", "title").text(); break;
+                        case TYPE_PUBLICATIONS: temp0 = el.getElementsByAttributeValue("class", "value").text(); break;
+                        default: temp0 = el.getElementsByAttributeValue("class", "title").text(); break;
                     }
-                    if (typeOfPage == TYPE_PUBLICATIONS)
-                        btn[tmp].setText(el.getElementsByAttributeValue("class", "value").text());
-                    else
-                        btn[tmp].setText(el.getElementsByAttributeValue("class", "title").text());
 
+                    if (!temp0.matches("(\\s+)")) btn[tmp].setText(temp0);
 
                     Drawable imgTmp = null;
                     if (typeOfPage == TYPE_PUBLICATIONS && el.select("img").first() != null) {
@@ -165,13 +170,33 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
                         btn[tmp].setWidth(((AppCompatActivity) context).findViewById(R.id.scrollView).getWidth());
                     else btn[tmp].setWidth(100);
 
+
+
+
+
                     btn[tmp].setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             try {
-                                (new DownloadTask(context, el.getElementsByTag("a").first().attr("abs:href"), DownloadTask.TYPE_ARTICLE, DownloadTask.SEPARATOR_ARTICLE)).execute();
+
+                                /**
+                                * Добавление слушателя на кнопку (заодно распознавание типа загружаемой страницы)
+                                */
+
+                                final int temp1;
+                                String temp0 = el.getElementsByTag("a").first().attr("abs:href");
+                                String selectedSeparator = SEPARATOR_ARTICLE;
+
+                                if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/articles/(.*).html")) temp1 = TYPE_ARTICLE;
+                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/news/(.*).html")) temp1 = TYPE_NEWS;
+                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/posts/(.*).html")) temp1 = TYPE_BLOG;
+                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/painter/(.*).html")) temp1 = TYPE_PAINTER;
+                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/user/\\d(\\d)?(\\d)")) temp1 = TYPE_USER;
+                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/writers/(.*).html")) { temp1 = TYPE_ARTICLE; selectedSeparator = SEPARATOR_DUEL_ARTICLE;}
+                                else temp1 = TYPE_DEFAULT; //TODO СРОЧНО ПОПРАВИТЬ!
+                                (new DownloadTask(context, el.getElementsByTag("a").first().attr("abs:href"), temp1, selectedSeparator)).execute();
                             } catch (Exception e) {
-                                Log.w("Error", e.getMessage());
+                                RoboErrorReporter.reportError(context, e);
                             }
                         }
                     });
@@ -179,7 +204,6 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
                 }
             }
         else {
-            Toast.makeText(context, "OK", Toast.LENGTH_SHORT).show();
             TextView text = new TextView(context);
             text.setLinksClickable(true);
             text.setAutoLinkMask(Linkify.ALL);

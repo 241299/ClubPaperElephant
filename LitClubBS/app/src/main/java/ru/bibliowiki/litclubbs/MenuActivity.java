@@ -112,7 +112,7 @@ public class MenuActivity extends AppCompatActivity
         } else if (id == R.id.nav_blog) {
             (new DownloadTask(this, getResources().getString(R.string.siteUrlBlog), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_writers) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlWriters), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlWriters), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_WRITERS)).execute();
         } else if (id == R.id.nav_journal) {
             (new DownloadTask(this, getResources().getString(R.string.siteUrlJournal), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_artists) {
