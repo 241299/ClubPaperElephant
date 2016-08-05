@@ -9,7 +9,7 @@ public class ConvertHTMLToText {
                 replaceAll("(<p>|<br>)", "\n").
                 replaceAll("(</p>|<a href=\"|</a>)", "").
                 replaceAll("<(div|/div)(.*)>", "").
-                replaceAll("\" target=\"_blank\">", " ")
-                .replaceAll("<([a-zA-Z]+)(?!\\s+)>(\\n+|\\s+)?</\\w>", "$2");
+                replaceAll("\" target=\"_blank\">", " ").
+                replaceAll("<([a-zA-Z]+)(?!\\s+)>(\\n+|\\s+)?</\\w>", "$2");
     }
 }
