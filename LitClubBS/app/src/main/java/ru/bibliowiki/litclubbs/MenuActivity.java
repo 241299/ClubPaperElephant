@@ -22,6 +22,8 @@ public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private String currentUrlLoaded;
+    private int currentTypeLoaded;
+    private String currentSeparatorLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,8 @@ public class MenuActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         RoboErrorReporter.bindReporter(this);
         currentUrlLoaded = getString(R.string.siteUrlHome);
+        currentTypeLoaded = DownloadTask.TYPE_DEFAULT;
+        currentSeparatorLoaded = DownloadTask.SEPARATOR_DEFAULT;
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -39,7 +43,7 @@ public class MenuActivity extends AppCompatActivity
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    (new DownloadTask(context, currentUrlLoaded)).execute();
+                    (new DownloadTask(context, currentUrlLoaded, currentTypeLoaded, currentSeparatorLoaded)).execute();
                     Snackbar.make(view, getString(R.string.refreshStarted), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
@@ -102,23 +106,23 @@ public class MenuActivity extends AppCompatActivity
 
         //Ссылки при нажатии на элементы navigation view
         if (id == R.id.nav_home) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlHome))).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlHome), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_publications) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlPublications))).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlPublications), DownloadTask.TYPE_PUBLICATIONS, DownloadTask.SEPARATOR_PUBLICATIONS)).execute();
         } else if (id == R.id.nav_blog) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlBlog))).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlBlog), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_writers) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlWriters))).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlWriters), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_journal) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlJournal))).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlJournal), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_artists) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlArtists))).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlArtists), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_photo) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlPhoto))).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlPhoto), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_help) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlHelp))).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlHelp), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_add) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlAddPublication))).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlAddPublication), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_settings) {
 
         }
@@ -145,7 +149,9 @@ public class MenuActivity extends AppCompatActivity
         super.onStop();
     }
 
-    public void setCurrentUrlLoaded(String url){
+    public void setCurrentPageLoaded(String url, int typeOfPage, String separator){
         currentUrlLoaded = url;
+        currentTypeLoaded = typeOfPage;
+        currentSeparatorLoaded = separator;
     }
 }
