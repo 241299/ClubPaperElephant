@@ -6,13 +6,10 @@ package ru.bibliowiki.litclubbs.util;
 public class ConvertHTMLToText {
     public static String convert(String html) {
         return html.
-                replaceAll("<p>", "\n").
-                replaceAll("</p>", "").
-                replaceAll("<div>", "").
-                replaceAll("</div>", "").
-                replaceAll("</a>", "").
-                replaceAll("<a href=\"", "").
-                replaceAll("\" target=\"_blank\">", " ").
-                replaceAll("<br>", "\n");
+                replaceAll("(<p>|<br>)", "\n").
+                replaceAll("(</p>|<a href=\"|</a>)", "").
+                replaceAll("<(div|/div)(.*)>", "").
+                replaceAll("\" target=\"_blank\">", " ")
+                .replaceAll("<([a-zA-Z]+)(?!\\s+)>(\\n+|\\s+)?</\\w>", "$2");
     }
 }
