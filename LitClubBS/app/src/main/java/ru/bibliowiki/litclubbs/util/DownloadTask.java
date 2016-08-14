@@ -89,7 +89,13 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
         try {
             Document doc = Jsoup.connect(url).get();
             if (doc != null) {
-                doc.select("nav").remove();
+                doc.select("nav").remove(); //Убрать навигацию
+                //TODO Вернуть их и активность переделанными похже
+                doc.select("div[class*=widget_comments_list").remove(); //Убрать комментарии (Для главной)
+                doc.select("div[class*=widget_activity_list").remove(); //Убрать активность
+                doc.select("div[class*=widget_profiles_list list").remove(); //Убрать "Авторы приглашают"
+                doc.select("ul[class*=menu").remove(); //Убрать пустые ссылки в конце страницы
+
                 e = doc.getElementsByAttributeValue("class", separatorUsed);
 //                    e = doc.getElementsByTag("a");
             } else
@@ -110,7 +116,6 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             return;
         }
 
-        //TODO дописать код анимации для кнопки обновления
         ((MenuActivity) context).setCurrentPageLoaded(url, typeOfPage, separatorUsed);
 
         int tmp = 0;

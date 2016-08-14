@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import ru.bibliowiki.litclubbs.util.DownloadTask;
@@ -37,15 +37,16 @@ public class MenuActivity extends AppCompatActivity
         currentSeparatorLoaded = DownloadTask.SEPARATOR_DEFAULT;
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
             final Context context = this;
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     (new DownloadTask(context, currentUrlLoaded, currentTypeLoaded, currentSeparatorLoaded)).execute();
-                    Snackbar.make(view, getString(R.string.refreshStarted), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+//                    Snackbar.make(view, getString(R.string.refreshStarted), Snackbar.LENGTH_LONG)
+//                            .setAction("Action", null).show();
+                    fab.startAnimation(AnimationUtils.loadAnimation(context, R.anim.rotate_center));
                 }
             });
         }
