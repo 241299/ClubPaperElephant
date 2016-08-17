@@ -8,7 +8,6 @@ import android.view.View;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
@@ -38,7 +37,6 @@ public class ImageDownloadTask {
                         .cacheOnDisc(true)
                         .bitmapConfig(Bitmap.Config.RGB_565).build());
 
-
     }
 
     public ImageDownloadTask(Context context, String imageUri, ImageSize imageSize, DisplayImageOptions displayImageOptions) {
@@ -51,7 +49,6 @@ public class ImageDownloadTask {
     private Drawable downloadImage(){
         try {
             ImageLoader il = ImageLoader.getInstance();
-            il.init(ImageLoaderConfiguration.createDefault(context));
             il.loadImage(imageUri, imageSize, displayImageOptions, new SimpleImageLoadingListener(){
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage){

@@ -15,6 +15,17 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
+import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
+import com.nostra13.universalimageloader.utils.StorageUtils;
+
+import java.io.File;
+
 import ru.bibliowiki.litclubbs.util.DownloadTask;
 import ru.bibliowiki.litclubbs.util.RoboErrorReporter;
 
@@ -36,6 +47,20 @@ public class MenuActivity extends AppCompatActivity
         currentTypeLoaded = DownloadTask.TYPE_DEFAULT;
         currentSeparatorLoaded = DownloadTask.SEPARATOR_DEFAULT;
 
+        File cacheDir = StorageUtils.getCacheDirectory(this, true);
+        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(this)
+                .memoryCacheExtraOptions(48, 80) // width, height
+                .threadPoolSize(5)
+                .threadPriority(Thread.MIN_PRIORITY + 2)
+                .denyCacheImageMultipleSizesInMemory()
+                .memoryCache(new UsingFreqLimitedMemoryCache(2 * 1024 * 1024)) // 2 Mb
+                .discCache(new UnlimitedDiskCache(cacheDir))
+                .discCacheFileNameGenerator(new HashCodeFileNameGenerator())
+                .imageDownloader(new BaseImageDownloader(this, 5 * 1000, 30 * 1000)) // connectTimeout (5 s), readTimeout (30 s)
+                .defaultDisplayImageOptions(DisplayImageOptions.createSimple())
+                .writeDebugLogs()
+                .build();
+        ImageLoader.getInstance().init(configuration);
 
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {

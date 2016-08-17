@@ -1,20 +1,18 @@
 package ru.bibliowiki.litclubbs.util;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.text.util.Linkify;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -45,8 +43,8 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     public static final int TYPE_NEWS = 4;
     public static final int TYPE_PAINTER = 5;
     public static final int TYPE_USER = 6;
-    public static final int TYPE_RESERVED0 = 7;
-    public static final int TYPE_RESERVED1 = 8;
+    public static final int TYPE_DUEL_ARTICLE = 7;
+    public static final int TYPE_WRITERS = 8;
     public static final int TYPE_RESERVED2 = 9;
     public static final int TYPE_RESERVED3 = 10;
     public static final int TYPE_RESERVED4 = 11;
@@ -58,6 +56,7 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     public final static String SEPARATOR_ARTICLE = "field ft_html f_content";
     public final static String SEPARATOR_DUEL_ARTICLE = "field ft_html f_content2";
     public final static String SEPARATOR_WRITERS = "content_list_item writers_list_item";
+    private Document doc;
 
 
     @Override
@@ -87,10 +86,10 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         try {
-            Document doc = Jsoup.connect(url).get();
+            doc = Jsoup.connect(url).get();
             if (doc != null) {
                 doc.select("nav").remove(); //Убрать навигацию
-                //TODO Вернуть их и активность переделанными похже
+                //TODO Вернуть их и активность переделанными позже
                 doc.select("div[class*=widget_comments_list").remove(); //Убрать комментарии (Для главной)
                 doc.select("div[class*=widget_activity_list").remove(); //Убрать активность
                 doc.select("div[class*=widget_profiles_list list").remove(); //Убрать "Авторы приглашают"
@@ -107,6 +106,8 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
+
+    //TODO Разделение тасков в разные классы одного интерфейса в non-proto версии
     @Override
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
@@ -118,104 +119,97 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
 
         ((MenuActivity) context).setCurrentPageLoaded(url, typeOfPage, separatorUsed);
 
-        int tmp = 0;
-        btn = new Button[e.size()];
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        final LinearLayout linearLayout = (LinearLayout) ((AppCompatActivity) context).findViewById(R.id.linearLayout_menu);
-        if (linearLayout != null) {
-            linearLayout.removeAllViews();
+        GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
+        final GridLayout gridLayout = (GridLayout) ((AppCompatActivity) context).findViewById(R.id.gridLayout_menu);
+
+        if (gridLayout != null) {
+            gridLayout.removeAllViews();
         }
 
-        if (typeOfPage != TYPE_ARTICLE && typeOfPage != TYPE_NEWS)
+        if (typeOfPage != TYPE_ARTICLE && typeOfPage != TYPE_NEWS && typeOfPage != TYPE_DUEL_ARTICLE)
             for (int i = 0; i < e.size(); i++) {
                 final Element el = e.get(i);
-                if (el != null && el.text().length() > 1) {
-                    btn[tmp] = new Button(context);
-                    btn[tmp].setLayoutParams(layoutParams);
 
-                    if (linearLayout != null && btn[tmp] != null) {
-                        try {
-                            ((LinearLayout.LayoutParams) btn[tmp].getLayoutParams()).setMargins(0, 0, 0, 5);
-                            btn[tmp].requestLayout();
-                            linearLayout.addView(btn[tmp]);
-                        } catch (Exception e) {
-                            Log.w("Error", e.getMessage());
-                            Toast.makeText(context, context.getString(R.string.documentDownloadFailed), Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                /**
+                 * Различный текст в зависимости от выбранного типа страницы
+                 */
 
-                    /**
-                     * Различный текст в зависимости от выбранного типа страницы
-                     */
+                String temp0;
 
-                    String temp0 = "Smtxt";
-
-                    //TODO ДОДЕЛАТЬ
-                    switch (typeOfPage){
-                        case TYPE_DEFAULT: temp0 = el.getElementsByAttributeValue("class", "title").text(); break;
-                        case TYPE_PUBLICATIONS: temp0 = el.getElementsByAttributeValue("class", "value").text(); break;
-                        default: temp0 = el.getElementsByAttributeValue("class", "title").text(); break;
-                    }
-
-                    if (!temp0.matches("(\\s+)")) btn[tmp].setText(temp0);
-
-                    Drawable imgTmp = null;
-                    if (typeOfPage == TYPE_PUBLICATIONS && el.select("img").first() != null) {
-                        imgTmp = ImageDownloadTask.downloadImage(context, el.select("img").first().absUrl("src"), new ImageSize(50, 80));
-                    }
-
-                    btn[tmp].setGravity(Gravity.CENTER_HORIZONTAL);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        if (imgTmp != null)
-                            btn[tmp].setCompoundDrawablesWithIntrinsicBounds(imgTmp, null, null, null);
-                        btn[tmp].setBackgroundDrawable(context.getResources().getDrawable(R.drawable.ic_bg));
-                    } else
-                        RoboErrorReporter.reportError(context, new NullPointerException("No image found"));
-                    if (((AppCompatActivity) context).findViewById(R.id.scrollView) != null)
-                        btn[tmp].setWidth(((AppCompatActivity) context).findViewById(R.id.scrollView).getWidth());
-                    else btn[tmp].setWidth(100);
-
-
-
-
-
-                    btn[tmp].setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-
-                                /**
-                                * Добавление слушателя на кнопку (заодно распознавание типа загружаемой страницы)
-                                */
-
-                                final int temp1;
-                                String temp0 = el.getElementsByTag("a").first().attr("abs:href");
-                                String selectedSeparator = SEPARATOR_ARTICLE;
-
-                                if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/articles/(.*).html")) temp1 = TYPE_ARTICLE;
-                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/news/(.*).html")) temp1 = TYPE_NEWS;
-                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/posts/(.*).html")) temp1 = TYPE_BLOG;
-                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/painter/(.*).html")) temp1 = TYPE_PAINTER;
-                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/user/\\d(\\d)?(\\d)")) temp1 = TYPE_USER;
-                                else if (temp0.matches("(http://)?litclubbs.bibliowiki.ru/writers/(.*).html")) { temp1 = TYPE_ARTICLE; selectedSeparator = SEPARATOR_DUEL_ARTICLE;}
-                                else temp1 = TYPE_DEFAULT; //TODO СРОЧНО ПОПРАВИТЬ!
-                                (new DownloadTask(context, el.getElementsByTag("a").first().attr("abs:href"), temp1, selectedSeparator)).execute();
-                            } catch (Exception e) {
-                                RoboErrorReporter.reportError(context, e);
-                            }
-                        }
-                    });
-                    tmp++;
+                //TODO ДОДЕЛАТЬ
+                switch (typeOfPage) {
+                    case TYPE_DEFAULT:
+                        temp0 = el.getElementsByAttributeValue("class", "title").text();
+                        break;
+                    case TYPE_PUBLICATIONS:
+                        temp0 = el.getElementsByAttributeValue("class", "value").text();
+                        break;
+                    default:
+                        temp0 = el.getElementsByAttributeValue("class", "title").text();
+                        break;
                 }
+
+//                    Drawable imgTmp = null;
+//                    if (typeOfPage == TYPE_PUBLICATIONS && el.select("img").first() != null) {
+//                        imgTmp = ImageDownloadTask.downloadImage(context, el.select("img").first().absUrl("src"), new ImageSize(50, 80));
+//                    }
+
+                TextView tv = new TextView(context);
+                LinearLayout linearLayout = new LinearLayout(context);
+
+                if (gridLayout != null) {
+
+                    linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+                    if (typeOfPage == TYPE_PUBLICATIONS) {
+                        ImageView iv = new ImageView(context);
+                        iv.setMaxWidth(50);
+                        iv.setMaxHeight(50);
+                        try {
+                            ImageLoader.getInstance().displayImage(el.select("img").first().absUrl("src"), iv);
+                        } catch (java.lang.NullPointerException e){
+                            iv.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_empty));
+                        }
+                        linearLayout.addView(iv);
+                    }
+
+                    tv.setText(temp0);
+                    linearLayout.addView(tv);
+                    linearLayout.setPadding(0, 0, 0, 10);
+
+                    gridLayout.addView(linearLayout);
+                }
+
+                linearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+
+                            /**
+                             * Добавление слушателя на текст
+                             */
+
+                            String temp0 = el.getElementsByTag("a").first().attr("abs:href");
+                            String selectedSeparator = SEPARATOR_ARTICLE;
+
+                            final int temp1 = RecognizeUrl.recognizeUrl(temp0);
+                            if (temp1 == TYPE_DUEL_ARTICLE) selectedSeparator = SEPARATOR_DUEL_ARTICLE;
+                            (new DownloadTask(context, el.getElementsByTag("a").first().attr("abs:href"), temp1, selectedSeparator)).execute();
+                        } catch (Exception e) {
+                            RoboErrorReporter.reportError(context, e);
+                        }
+                    }
+                });
             }
         else {
             TextView text = new TextView(context);
             text.setLinksClickable(true);
+            text.setClickable(true);
             text.setAutoLinkMask(Linkify.ALL);
-            text.setText(ConvertHTMLToText.convert(e.get(0).getElementsByAttributeValue("class", "value").toString()));
+            text.setText(ConvertHTMLToText.convert(context, e.get(0).getElementsByAttributeValue("class", "value").toString(), doc.getElementsByAttributeValue("title", "Автор").select("a").toString()));
             text.setLayoutParams(layoutParams);
-            if (linearLayout != null) {
-                linearLayout.addView(text);
+            if (gridLayout != null) {
+                gridLayout.addView(text);
             }
         }
     }

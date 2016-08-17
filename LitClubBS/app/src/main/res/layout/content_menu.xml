@@ -14,7 +14,11 @@
     tools:showIn="@layout/app_bar_menu"
     android:orientation="vertical">
 
-
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:layout_gravity="center_horizontal" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -22,27 +26,31 @@
         android:layout_height="fill_parent"
         android:scrollbars="vertical">
 
-        <LinearLayout
-            android:paddingTop="20sp"
-            android:id="@+id/linearLayout_menu"
+        <GridLayout
+            android:paddingTop="10sp"
+            android:columnCount="4"
+            android:id="@+id/gridLayout_menu"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <ImageView
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/ic_icon_elephant"
                 android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"/>
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:paddingTop="20sp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/app_name"
                 android:textSize="@dimen/default_text_size"
+                android:paddingTop="20sp"
                 android:textColor="@color/common_plus_signin_btn_text_light_default"
                 android:gravity="center_vertical|center_horizontal"/>
-        </LinearLayout>
+        </GridLayout>
     </ScrollView>
 </LinearLayout>
