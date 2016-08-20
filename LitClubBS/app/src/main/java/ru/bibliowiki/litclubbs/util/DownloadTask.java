@@ -2,13 +2,16 @@ package ru.bibliowiki.litclubbs.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.util.Linkify;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.GridLayout;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +26,7 @@ import java.io.IOException;
 
 import ru.bibliowiki.litclubbs.MenuActivity;
 import ru.bibliowiki.litclubbs.R;
+import ru.bibliowiki.litclubbs.lookandfeel.MenuArrayAdapter;
 
 /**
  * @author by pf on 05.07.2016.
@@ -119,97 +123,94 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
 
         ((MenuActivity) context).setCurrentPageLoaded(url, typeOfPage, separatorUsed);
 
-        GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
-        final GridLayout gridLayout = (GridLayout) ((AppCompatActivity) context).findViewById(R.id.gridLayout_menu);
+        final LinearLayout linearLayout = (LinearLayout) ((AppCompatActivity) context).findViewById(R.id.linearLayout_menu);
 
-        if (gridLayout != null) {
-            gridLayout.removeAllViews();
+        if (linearLayout != null) {
+            linearLayout.removeAllViews();
         }
 
-        if (typeOfPage != TYPE_ARTICLE && typeOfPage != TYPE_NEWS && typeOfPage != TYPE_DUEL_ARTICLE)
-            for (int i = 0; i < e.size(); i++) {
-                final Element el = e.get(i);
+        String a[] = new String[e.size()];
 
-                /**
-                 * Различный текст в зависимости от выбранного типа страницы
-                 */
+        if (typeOfPage != TYPE_ARTICLE && typeOfPage != TYPE_NEWS && typeOfPage != TYPE_DUEL_ARTICLE) {
 
-                String temp0;
+//            for (int i = 0; i < e.size(); i++) {
+//                final Element el = e.get(i);
 
-                //TODO ДОДЕЛАТЬ
-                switch (typeOfPage) {
-                    case TYPE_DEFAULT:
-                        temp0 = el.getElementsByAttributeValue("class", "title").text();
-                        break;
-                    case TYPE_PUBLICATIONS:
-                        temp0 = el.getElementsByAttributeValue("class", "value").text();
-                        break;
-                    default:
-                        temp0 = el.getElementsByAttributeValue("class", "title").text();
-                        break;
-                }
-
-//                    Drawable imgTmp = null;
-//                    if (typeOfPage == TYPE_PUBLICATIONS && el.select("img").first() != null) {
-//                        imgTmp = ImageDownloadTask.downloadImage(context, el.select("img").first().absUrl("src"), new ImageSize(50, 80));
+//                TextView tv = new TextView(context);
+//                LinearLayout linearLayout = new LinearLayout(context);
+//
+//                ListView lv = new ListView(context);
+//
+//                if (linearLayout != null) {
+//
+//                    linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+//
+//                    if (typeOfPage == TYPE_PUBLICATIONS) {
+//                        ImageView iv = new ImageView(context);
+//                        iv.setMaxWidth(50);
+//                        iv.setMaxHeight(50);
+//                        try {
+//                            ImageLoader.getInstance().displayImage(el.select("img").first().absUrl("src"), iv);
+//                        } catch (java.lang.NullPointerException e){
+//                            iv.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_empty));
+//                        }
+//                        linearLayout.addView(iv);
 //                    }
+//
+//                    tv.setText(temp0);
+//                    linearLayout.addView(tv);
+//                    linearLayout.setPadding(0, 0, 0, 10);
+//
+//                    linearLayout.addView(linearLayout);
+//                }
+//
+//                linearLayout.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        try {
+//
+//                            /**
+//                             * Добавление слушателя на текст
+//                             */
+//
+//                            String temp0 = el.getElementsByTag("a").first().attr("abs:href");
+//                            String selectedSeparator = SEPARATOR_ARTICLE;
+//
+//                            final int temp1 = RecognizeUrl.recognizeUrl(temp0);
+//                            if (temp1 == TYPE_DUEL_ARTICLE) selectedSeparator = SEPARATOR_DUEL_ARTICLE;
+//                            (new DownloadTask(context, el.getElementsByTag("a").first().attr("abs:href"), temp1, selectedSeparator)).execute();
+//                        } catch (Exception e) {
+//                            RoboErrorReporter.reportError(context, e);
+//                        }
+//                    }
+//                });
+//            }
 
-                TextView tv = new TextView(context);
-                LinearLayout linearLayout = new LinearLayout(context);
+            ListView listView = new ListView(context);
+            MenuArrayAdapter arrayAdapter = new MenuArrayAdapter(context, e, typeOfPage);
+            listView.setAdapter(arrayAdapter);
 
-                if (gridLayout != null) {
-
-                    linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-
-                    if (typeOfPage == TYPE_PUBLICATIONS) {
-                        ImageView iv = new ImageView(context);
-                        iv.setMaxWidth(50);
-                        iv.setMaxHeight(50);
-                        try {
-                            ImageLoader.getInstance().displayImage(el.select("img").first().absUrl("src"), iv);
-                        } catch (java.lang.NullPointerException e){
-                            iv.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_empty));
-                        }
-                        linearLayout.addView(iv);
-                    }
-
-                    tv.setText(temp0);
-                    linearLayout.addView(tv);
-                    linearLayout.setPadding(0, 0, 0, 10);
-
-                    gridLayout.addView(linearLayout);
-                }
-
-                linearLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        try {
-
-                            /**
-                             * Добавление слушателя на текст
-                             */
-
-                            String temp0 = el.getElementsByTag("a").first().attr("abs:href");
-                            String selectedSeparator = SEPARATOR_ARTICLE;
-
-                            final int temp1 = RecognizeUrl.recognizeUrl(temp0);
-                            if (temp1 == TYPE_DUEL_ARTICLE) selectedSeparator = SEPARATOR_DUEL_ARTICLE;
-                            (new DownloadTask(context, el.getElementsByTag("a").first().attr("abs:href"), temp1, selectedSeparator)).execute();
-                        } catch (Exception e) {
-                            RoboErrorReporter.reportError(context, e);
-                        }
-                    }
-                });
+            if (linearLayout != null) {
+                linearLayout.addView(listView);
             }
-        else {
+
+//            View v = new View(context);
+//            v.setLayoutParams(new ActionBar.LayoutParams(android.R.layout.activity_list_item));
+//            v.requestLayout();
+//            ImageView iv = (ImageView) v.findViewById(android.R.id.icon);
+//            listView.addView(v);
+
+//            View row = listView.getChildAt(0 - listView.getFirstVisiblePosition());
+//            for (int i = 0; i<a.length; i++) if ((row = listView.getChildAt(i- listView.getFirstVisiblePosition())) == null) Toast.makeText(context, "Row " + i + " is null", Toast.LENGTH_SHORT).show(); else return;
+
+        } else {
             TextView text = new TextView(context);
             text.setLinksClickable(true);
             text.setClickable(true);
             text.setAutoLinkMask(Linkify.ALL);
             text.setText(ConvertHTMLToText.convert(context, e.get(0).getElementsByAttributeValue("class", "value").toString(), doc.getElementsByAttributeValue("title", "Автор").select("a").toString()));
-            text.setLayoutParams(layoutParams);
-            if (gridLayout != null) {
-                gridLayout.addView(text);
+            if (linearLayout != null) {
+                linearLayout.addView(text);
             }
         }
     }
