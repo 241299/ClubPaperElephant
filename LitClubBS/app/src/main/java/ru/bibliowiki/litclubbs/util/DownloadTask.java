@@ -2,31 +2,26 @@ package ru.bibliowiki.litclubbs.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBar;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
 import ru.bibliowiki.litclubbs.MenuActivity;
 import ru.bibliowiki.litclubbs.R;
-import ru.bibliowiki.litclubbs.lookandfeel.MenuArrayAdapter;
+import ru.bibliowiki.litclubbs.lookandfeel.RecyclerViewAdapter;
 
 /**
  * @author by pf on 05.07.2016.
@@ -186,12 +181,13 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
 //                });
 //            }
 
-            ListView listView = new ListView(context);
-            MenuArrayAdapter arrayAdapter = new MenuArrayAdapter(context, e, typeOfPage);
-            listView.setAdapter(arrayAdapter);
+            RecyclerView recyclerView = new RecyclerView(context);
+            RecyclerViewAdapter arrayAdapter = new RecyclerViewAdapter(context, e, typeOfPage);
+            recyclerView.setAdapter(arrayAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
             if (linearLayout != null) {
-                linearLayout.addView(listView);
+                linearLayout.addView(recyclerView);
             }
 
 //            View v = new View(context);
@@ -210,7 +206,13 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             text.setAutoLinkMask(Linkify.ALL);
             text.setText(ConvertHTMLToText.convert(context, e.get(0).getElementsByAttributeValue("class", "value").toString(), doc.getElementsByAttributeValue("title", "Автор").select("a").toString()));
             if (linearLayout != null) {
-                linearLayout.addView(text);
+                ScrollView scrollView = new ScrollView(context);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    scrollView.setNestedScrollingEnabled(true);
+                }
+                scrollView.addView(text);
+
+                linearLayout.addView(scrollView);
             }
         }
     }

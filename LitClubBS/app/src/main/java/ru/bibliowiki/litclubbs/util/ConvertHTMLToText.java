@@ -59,8 +59,10 @@ public class ConvertHTMLToText {
         while (plainTextSB.indexOf(subs) != -1) {
             int tmp1 = plainTextSB.indexOf(subs);
             int tmp2 = plainTextSB.indexOf(subs.replace("<", "</")) != -1 ? plainTextSB.indexOf(subs.replace("<", "</")) : plainTextSB.capacity();
+
+            if (tmp2 != plainTextSB.capacity()) plainTextSB.delete(tmp2, tmp2 + subs.length() + 1);
             plainTextSB.delete(tmp1, tmp1 + subs.length());
-            if (tmp2 != plainTextSB.capacity()) plainTextSB.delete(tmp2 - subs.length(), tmp2 + 1);
+            //This is <b>Some</b> text with a <u>lot of</u> <em>marks</em>
 
             if (spanType instanceof StyleSpan)
                 spansList.add(new Span(spanType, tmp1, tmp2 - subs.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE));
@@ -72,14 +74,14 @@ public class ConvertHTMLToText {
 
     private static String searchForLinks(final Context context, String string, ArrayList<Span> spansList) {
 
-
         StringBuilder plainTextSB = new StringBuilder(string);
 
         while (plainTextSB.indexOf("<a ") != -1){
             int tmp1 = plainTextSB.indexOf("<a ");
             int tmp2 = plainTextSB.indexOf("</a>");
-            int tmp3 = plainTextSB.substring(tmp1, tmp2).indexOf(">") + tmp1;
-            final String tmp = plainTextSB.substring(plainTextSB.indexOf("href"), tmp3).replaceAll("href\\s*=\\s*\"(.*)\"\\s-?", "$1");
+            int tmp3 = tmp1<tmp2? plainTextSB.substring(tmp1, tmp2).indexOf(">") + tmp1 : plainTextSB.substring(tmp2, tmp1).indexOf(">") + tmp1;
+            int tmp4 = plainTextSB.indexOf("href");
+            final String tmp = tmp4 < tmp3? (tmp4!=-1? plainTextSB.substring(tmp4, tmp3).replaceAll("href\\s*=\\s*\"(.*)\"\\s-?", "$1") : plainTextSB.substring(tmp4+1, tmp3).replaceAll("href\\s*=\\s*\"(.*)\"\\s-?", "$1")) : plainTextSB.substring(tmp3, tmp4).replaceAll("href\\s*=\\s*\"(.*)\"\\s-?", "$1");
 
             plainTextSB.delete(tmp2, tmp2+4);
             plainTextSB.delete(tmp1, tmp3+1);
@@ -89,9 +91,10 @@ public class ConvertHTMLToText {
                 public void onClick(View view) {
                     Toast.makeText(context, "Does it work?\n" + tmp, Toast.LENGTH_SHORT).show();
                     int tmptype = RecognizeUrl.recognizeUrl(tmp);
-                    new DownloadTask(context, tmp, tmptype, RecognizeUrl.matchSeparatorToType(tmptype)).execute();
+                    String temp = tmp.matches("href\\s*=\\s*\"/users/\\d+\"")? tmp.replaceAll("href\\s*=\\s*\"/users/(\\d+)\"", "http://litclubbs.bibliowiki.ru/users/$1") : tmp;
+                    new DownloadTask(context, temp, tmptype, RecognizeUrl.matchSeparatorToType(tmptype)).execute();
                 }
-            }, tmp1, tmp1+tmp2-tmp3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE));
+            }, tmp1, tmp1+tmp2-tmp3-1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE));
         }
 
         return plainTextSB.toString();

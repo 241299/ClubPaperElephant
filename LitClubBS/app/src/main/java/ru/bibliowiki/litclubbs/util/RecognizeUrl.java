@@ -21,7 +21,7 @@ public class RecognizeUrl {
             type = DownloadTask.TYPE_BLOG;
         else if (url.matches("(http://)?litclubbs.bibliowiki.ru/painter/(.*).html"))
             type = DownloadTask.TYPE_PAINTER;
-        else if (url.matches("(http://)?litclubbs.bibliowiki.ru/user/\\d(\\d)?(\\d)"))
+        else if (url.matches("(http://)?litclubbs.bibliowiki.ru/user/\\d+"))
             type = DownloadTask.TYPE_USER;
         else if (url.matches("(http://)?litclubbs.bibliowiki.ru/writers/(.*).html"))
             type = DownloadTask.TYPE_DUEL_ARTICLE;
