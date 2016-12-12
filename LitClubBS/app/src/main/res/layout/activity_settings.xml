@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_header"
+        android:layout_gravity="center"
+        android:text="@string/settings_header_text"
+        android:enabled="true"
+        android:gravity="center_horizontal"
+        android:textSize="@dimen/vk_share_title_text_size"
+        android:password="false"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/email_pt"
+        android:enabled="true"
+        android:editable="false"
+        android:text="Email"
+        android:focusable="false"
+        android:paddingLeft="10dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="10"
+        android:id="@+id/email_field"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.05"
+        android:editable="true"
+        android:enabled="true"
+        android:hint="example@email.ru"
+        android:padding="5dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.10" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pass_pt"
+        android:text="@string/settings_password_txt"
+        android:paddingLeft="10dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/pass_field"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.05"
+        android:editable="true"
+        android:enabled="true"
+        android:padding="5dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.13"
+        android:weightSum="1">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_sign_in_btn_txt"
+            android:id="@+id/settings_sign_in_btn"
+            android:clickable="true"
+            android:enabled="true"
+            android:layout_gravity="left"
+            style="?android:attr/buttonBarButtonStyle"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_sign_up_btn_txt"
+            android:id="@+id/settings_sign_up_btn"
+            android:layout_gravity="right"
+            style="?android:attr/buttonBarButtonStyle"
+            android:paddingLeft="20dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

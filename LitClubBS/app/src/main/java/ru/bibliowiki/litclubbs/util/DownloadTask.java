@@ -3,11 +3,12 @@ package ru.bibliowiki.litclubbs.util;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.util.Linkify;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -31,11 +32,10 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     private final Context context;
     private int typeOfPage;
     private String separatorUsed;
-    Button[] btn;
     Elements e;
     String url;
 
-    public final static int TYPE_DEFAULT = 0;
+    public final static int TYPE_HOME = 0;
     public final static int TYPE_PUBLICATIONS = 1;
     public static final int TYPE_ARTICLE = 2;
     public static final int TYPE_BLOG = 3;
@@ -47,8 +47,8 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     public static final int TYPE_RESERVED2 = 9;
     public static final int TYPE_RESERVED3 = 10;
     public static final int TYPE_RESERVED4 = 11;
-    public static final int TYPE_RESERVED5 = 12;
-    public static final int TYPE_RESERVED6 = 13;
+    public static final int TYPE_UNKNOWN = 12;
+    public static final int TYPE_VK = 13;
 
     public final static String SEPARATOR_DEFAULT = "item";
     public final static String SEPARATOR_PUBLICATIONS = "content_list_item articles_list_item";
@@ -56,7 +56,6 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     public final static String SEPARATOR_DUEL_ARTICLE = "field ft_html f_content2";
     public final static String SEPARATOR_WRITERS = "content_list_item writers_list_item";
     private Document doc;
-
 
     @Override
     protected void onPreExecute() {
@@ -74,14 +73,6 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
         this.separatorUsed = separatorUsed;
     }
 
-
-//    TODO understand it
-//   <div class="field ft_html f_content">
-//    <div class="title_top">Текст: </div>
-//    <div class="value"><p><strong>        </strong></p>  <p><strong></strong></p>  <p><strong></strong></p>  <p>Пахнет чистая трава,</p>  <p>И дорогу скрыла тьма.</p>  <p>Ты бояться не спеши,</p>  <p>Распахни амбар души!</p>    <p><br></p><p>Всё кузнечики трещат,</p>  <p>Звезды яркие не спят.</p>  <p>Слышишь сердца сильный стук?</p>  <p>Я тебе не просто друг.</p>    <p><br></p><p>Лишь березы видят нас,</p>  <p>Как прохладно в этот час!</p>  <p>Может, будет так всегда?</p>  <p>Ты скажи мне слово «да»!</p></div>
-//    </div>
-
-
     @Override
     protected Void doInBackground(Void... params) {
         try {
@@ -95,6 +86,7 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
                 doc.select("ul[class*=menu").remove(); //Убрать пустые ссылки в конце страницы
 
                 e = doc.getElementsByAttributeValue("class", separatorUsed);
+                if (typeOfPage == TYPE_PUBLICATIONS) e.select("div.field.ft_text.f_teaser").remove();
 //                    e = doc.getElementsByTag("a");
             } else
                 RoboErrorReporter.reportError(context, new NullPointerException(context.getString(R.string.documentDownloadFailed)));
@@ -104,7 +96,6 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
         }
         return null;
     }
-
 
     //TODO Разделение тасков в разные классы одного интерфейса в non-proto версии
     @Override
@@ -124,87 +115,34 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             linearLayout.removeAllViews();
         }
 
-        String a[] = new String[e.size()];
-
         if (typeOfPage != TYPE_ARTICLE && typeOfPage != TYPE_NEWS && typeOfPage != TYPE_DUEL_ARTICLE) {
-
-//            for (int i = 0; i < e.size(); i++) {
-//                final Element el = e.get(i);
-
-//                TextView tv = new TextView(context);
-//                LinearLayout linearLayout = new LinearLayout(context);
-//
-//                ListView lv = new ListView(context);
-//
-//                if (linearLayout != null) {
-//
-//                    linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-//
-//                    if (typeOfPage == TYPE_PUBLICATIONS) {
-//                        ImageView iv = new ImageView(context);
-//                        iv.setMaxWidth(50);
-//                        iv.setMaxHeight(50);
-//                        try {
-//                            ImageLoader.getInstance().displayImage(el.select("img").first().absUrl("src"), iv);
-//                        } catch (java.lang.NullPointerException e){
-//                            iv.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_empty));
-//                        }
-//                        linearLayout.addView(iv);
-//                    }
-//
-//                    tv.setText(temp0);
-//                    linearLayout.addView(tv);
-//                    linearLayout.setPadding(0, 0, 0, 10);
-//
-//                    linearLayout.addView(linearLayout);
-//                }
-//
-//                linearLayout.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        try {
-//
-//                            /**
-//                             * Добавление слушателя на текст
-//                             */
-//
-//                            String temp0 = el.getElementsByTag("a").first().attr("abs:href");
-//                            String selectedSeparator = SEPARATOR_ARTICLE;
-//
-//                            final int temp1 = RecognizeUrl.recognizeUrl(temp0);
-//                            if (temp1 == TYPE_DUEL_ARTICLE) selectedSeparator = SEPARATOR_DUEL_ARTICLE;
-//                            (new DownloadTask(context, el.getElementsByTag("a").first().attr("abs:href"), temp1, selectedSeparator)).execute();
-//                        } catch (Exception e) {
-//                            RoboErrorReporter.reportError(context, e);
-//                        }
-//                    }
-//                });
-//            }
 
             RecyclerView recyclerView = new RecyclerView(context);
             RecyclerViewAdapter arrayAdapter = new RecyclerViewAdapter(context, e, typeOfPage);
             recyclerView.setAdapter(arrayAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setNestedScrollingEnabled(true);
 
+            //Добавляем наш recycler view и прослушку для обновления
             if (linearLayout != null) {
-                linearLayout.addView(recyclerView);
+                final SwipeRefreshLayout swipeRefreshLayout = new SwipeRefreshLayout(context);
+                recyclerView.setMinimumWidth(linearLayout.getWidth());
+                swipeRefreshLayout.addView(recyclerView);
+                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        refreshItems(swipeRefreshLayout);
+                    }
+                });
+                linearLayout.addView(swipeRefreshLayout);
             }
-
-//            View v = new View(context);
-//            v.setLayoutParams(new ActionBar.LayoutParams(android.R.layout.activity_list_item));
-//            v.requestLayout();
-//            ImageView iv = (ImageView) v.findViewById(android.R.id.icon);
-//            listView.addView(v);
-
-//            View row = listView.getChildAt(0 - listView.getFirstVisiblePosition());
-//            for (int i = 0; i<a.length; i++) if ((row = listView.getChildAt(i- listView.getFirstVisiblePosition())) == null) Toast.makeText(context, "Row " + i + " is null", Toast.LENGTH_SHORT).show(); else return;
 
         } else {
             TextView text = new TextView(context);
             text.setLinksClickable(true);
             text.setClickable(true);
             text.setAutoLinkMask(Linkify.ALL);
-            text.setText(ConvertHTMLToText.convert(context, e.get(0).getElementsByAttributeValue("class", "value").toString(), doc.getElementsByAttributeValue("title", "Автор").select("a").toString()));
+            SpecializedHtmlParser.getInstance(context).setArticle(doc, e, text);//TODO:RELEASE Сократить обращения к главному документу, навести порядок в классах Download Task и SpecializedHtmlParser
             if (linearLayout != null) {
                 ScrollView scrollView = new ScrollView(context);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -214,6 +152,19 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
 
                 linearLayout.addView(scrollView);
             }
+
+            Toolbar toolbar = (Toolbar) ((AppCompatActivity) context).findViewById(R.id.toolbar);
+            if (toolbar!=null) toolbar.setTitle(doc.title());
+
         }
+    }
+
+    private void refreshItems(SwipeRefreshLayout swiper){
+        MenuActivity link = (MenuActivity)context;
+        (new DownloadTask(context, link.getCurrentUrlLoaded(), link.getCurrentTypeLoaded(), link.getCurrentSeparatorLoaded())).execute();
+        onItemsLoadComplete(swiper);
+    }
+    private void onItemsLoadComplete(SwipeRefreshLayout swiper){
+        swiper.setRefreshing(false);
     }
 }

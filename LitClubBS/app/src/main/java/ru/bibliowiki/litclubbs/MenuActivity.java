@@ -1,7 +1,9 @@
 package ru.bibliowiki.litclubbs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -44,7 +46,7 @@ public class MenuActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         RoboErrorReporter.bindReporter(this);
         currentUrlLoaded = getString(R.string.siteUrlHome);
-        currentTypeLoaded = DownloadTask.TYPE_DEFAULT;
+        currentTypeLoaded = DownloadTask.TYPE_HOME;
         currentSeparatorLoaded = DownloadTask.SEPARATOR_DEFAULT;
 
         File cacheDir = StorageUtils.getCacheDirectory(this, true);
@@ -69,8 +71,6 @@ public class MenuActivity extends AppCompatActivity
                 @Override
                 public void onClick(View view) {
                     (new DownloadTask(context, currentUrlLoaded, currentTypeLoaded, currentSeparatorLoaded)).execute();
-//                    Snackbar.make(view, getString(R.string.refreshStarted), Snackbar.LENGTH_LONG)
-//                            .setAction("Action", null).show();
                     fab.startAnimation(AnimationUtils.loadAnimation(context, R.anim.rotate_center));
                 }
             });
@@ -88,6 +88,9 @@ public class MenuActivity extends AppCompatActivity
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
         }
+
+        (new DownloadTask(this, currentUrlLoaded, currentTypeLoaded, currentSeparatorLoaded)).execute();
+
     }
 
     @Override
@@ -97,6 +100,7 @@ public class MenuActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            //TODO Реализовать перемещение по кэшированным страницам
         }
     }
 
@@ -124,7 +128,7 @@ public class MenuActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -132,25 +136,26 @@ public class MenuActivity extends AppCompatActivity
 
         //Ссылки при нажатии на элементы navigation view
         if (id == R.id.nav_home) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlHome), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlHome), DownloadTask.TYPE_HOME, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_publications) {
             (new DownloadTask(this, getResources().getString(R.string.siteUrlPublications), DownloadTask.TYPE_PUBLICATIONS, DownloadTask.SEPARATOR_PUBLICATIONS)).execute();
         } else if (id == R.id.nav_blog) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlBlog), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlBlog), DownloadTask.TYPE_HOME, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_writers) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlWriters), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_WRITERS)).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlWriters), DownloadTask.TYPE_WRITERS, DownloadTask.SEPARATOR_WRITERS)).execute();
         } else if (id == R.id.nav_journal) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlJournal), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlJournal), DownloadTask.TYPE_HOME, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_artists) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlArtists), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlArtists), DownloadTask.TYPE_HOME, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_photo) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlPhoto), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlPhoto), DownloadTask.TYPE_HOME, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_help) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlHelp), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlHelp), DownloadTask.TYPE_HOME, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_add) {
-            (new DownloadTask(this, getResources().getString(R.string.siteUrlAddPublication), DownloadTask.TYPE_DEFAULT, DownloadTask.SEPARATOR_DEFAULT)).execute();
+            (new DownloadTask(this, getResources().getString(R.string.siteUrlAddPublication), DownloadTask.TYPE_HOME, DownloadTask.SEPARATOR_DEFAULT)).execute();
         } else if (id == R.id.nav_settings) {
-
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         }
 
         if ((toolbar != null) && !(id == R.id.nav_settings || id == R.id.nav_share || id == R.id.nav_send_report)) {
@@ -179,5 +184,17 @@ public class MenuActivity extends AppCompatActivity
         currentUrlLoaded = url;
         currentTypeLoaded = typeOfPage;
         currentSeparatorLoaded = separator;
+    }
+
+    public String getCurrentUrlLoaded(){
+        return currentUrlLoaded;
+    }
+
+    public int getCurrentTypeLoaded() {
+        return currentTypeLoaded;
+    }
+
+    public String getCurrentSeparatorLoaded() {
+        return currentSeparatorLoaded;
     }
 }

@@ -5,7 +5,7 @@
     <string name="communicate">Аралашулар</string>
     <string name="gallery">Күргәзмә</string>
     <string name="logoLitClub">Әдәби клубы</string>
-    <string name="logoText">Кәгазь фил</string>
+    <string name="logoText">Кәгазь Фил</string>
     <string name="mainText">Монда бертөрле текст булачак</string>
     <string name="send_report">Отчет җибәрү</string>
     <string name="share">Бүлешү</string>
@@ -23,4 +23,10 @@
     <string name="refreshStarted">Яңарту…</string>
     <string name="defaultErrorMessage">Хата чыкты</string>
     <string name="documentDownloadFailed">Бит төявендә хата чыкты</string>
+    <string name="unknownTypeOfTheLink">Гафу итегез, сылтаманы ачып булмый</string>
+    <string name="settings_password_hint">Серсуз</string>
+    <string name="settings_password_txt">Серсүз</string>
+    <string name="settings_sign_up_btn_txt"></string>
+    <string name="settings_sign_in_btn_txt">Керү</string>
+    <string name="settings_header_text">Гафу, керегез</string>
 </resources>

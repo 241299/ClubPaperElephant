@@ -13,19 +13,21 @@ public class RecognizeUrl {
 
         int type;
 
-        if (url.matches("(http://)?litclubbs.bibliowiki.ru/articles/(.*).html"))
+        if (url.matches("(http://)?litclubbs.ru/articles/(.*).html"))
             type = DownloadTask.TYPE_ARTICLE;
-        else if (url.matches("(http://)?litclubbs.bibliowiki.ru/news/(.*).html"))
+        else if (url.matches("(http://)?litclubbs.ru/news/(.*).html"))
             type = DownloadTask.TYPE_NEWS;
-        else if (url.matches("(http://)?litclubbs.bibliowiki.ru/posts/(.*).html"))
+        else if (url.matches("(http://)?litclubbs.ru/posts/(.*).html"))
             type = DownloadTask.TYPE_BLOG;
-        else if (url.matches("(http://)?litclubbs.bibliowiki.ru/painter/(.*).html"))
+        else if (url.matches("(http://)?litclubbs.ru/painter/(.*).html"))
             type = DownloadTask.TYPE_PAINTER;
-        else if (url.matches("(http://)?litclubbs.bibliowiki.ru/user/\\d+"))
+        else if (url.matches("(http://)?litclubbs.ru/user/\\d+"))
             type = DownloadTask.TYPE_USER;
-        else if (url.matches("(http://)?litclubbs.bibliowiki.ru/writers/(.*).html"))
+        else if (url.matches("(http://)?litclubbs.ru/writers/(.*).html"))
             type = DownloadTask.TYPE_DUEL_ARTICLE;
-        else type = DownloadTask.TYPE_DEFAULT;
+        else if (url.matches("((http|https)://)?vk.com.*"))
+            type = DownloadTask.TYPE_VK;
+        else type = DownloadTask.TYPE_UNKNOWN;
 
         return type;
     }

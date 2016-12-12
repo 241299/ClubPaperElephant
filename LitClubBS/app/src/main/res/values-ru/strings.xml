@@ -23,4 +23,10 @@
     <string name="refreshStarted">Обновление…</string>
     <string name="defaultErrorMessage">Вышла ошибка</string>
     <string name="documentDownloadFailed">Ошибка загрузки страницы</string>
+    <string name="unknownTypeOfTheLink">Извините, тип ссылки не поддерживается</string>
+    <string name="settings_header_text">Пожалуйста, представьтесь</string>
+    <string name="settings_password_hint">Пароль</string>
+    <string name="settings_password_txt">Пароль</string>
+    <string name="settings_sign_in_btn_txt">Войти</string>
+    <string name="settings_sign_up_btn_txt">Зарегистрироваться</string>
 </resources>
