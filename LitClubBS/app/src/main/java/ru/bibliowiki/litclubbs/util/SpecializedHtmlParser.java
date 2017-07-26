@@ -29,6 +29,14 @@ import ru.bibliowiki.litclubbs.R;
 /**
  * @author by pf on 24.10.2016.
  */
+
+
+/**
+ * Данный класс осуществляет маркировку текста
+ * На вход: Document, Context
+ * На выход: Spannable
+ */
+
 public class SpecializedHtmlParser {
 
     private static SpecializedHtmlParser shp;
@@ -39,29 +47,32 @@ public class SpecializedHtmlParser {
 
         String preparedText = prepareText(document, elements);
 
-        Spanned spannedText = Html.fromHtml(preparedText, new Html.ImageGetter() {
-            @Override
-            public Drawable getDrawable(String s) {
-                final Drawable[] image = new Drawable[1];
-                try {
-                    ImageLoader.getInstance().loadImage(s, new SimpleImageLoadingListener() {
+        if (!"".equals(preparedText)) {
 
-                        @Override
-                        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                            image[0] = new BitmapDrawable(context.getResources(), loadedImage);
-                        }
-                    });
-                } catch (Exception e) {
-                    image[0] = context.getResources().getDrawable(R.drawable.ic_empty);
-                    RoboErrorReporter.reportError(context, new IOException("Can't download an image at ImageDownloadTask"));
+            Spanned spannedText = Html.fromHtml(preparedText, new Html.ImageGetter() {
+                @Override
+                public Drawable getDrawable(String s) {
+                    final Drawable[] image = new Drawable[1];
+                    try {
+                        ImageLoader.getInstance().loadImage(s, new SimpleImageLoadingListener() {
+
+                            @Override
+                            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                                image[0] = new BitmapDrawable(context.getResources(), loadedImage);
+                            }
+                        });
+                    } catch (Exception e) {
+                        image[0] = context.getResources().getDrawable(R.drawable.ic_empty);
+                        RoboErrorReporter.reportError(context, new IOException("Can't download an image at ImageDownloadTask"));
+                    }
+                    return image[0];
                 }
-                return image[0];
-            }
-        }, null);
+            }, null);
 
-        Spannable reversedText = revertSpanned(spannedText);
-        if (view instanceof TextView) ((TextView) view).setText(reversedText);
-        executeExWorks();
+            Spannable reversedText = revertSpanned(spannedText);
+            if (view instanceof TextView) ((TextView) view).setText(reversedText);
+            executeExWorks();
+        }
     }
 
     private void executeExWorks() {
@@ -70,17 +81,26 @@ public class SpecializedHtmlParser {
 //  Подготовка текста
     private String prepareText(Document document, Elements elements) {
 
-        String result = document.getElementsByAttributeValue("title", "Автор").select("a").toString() + elements.get(0).toString().replaceAll("<ul>|</ul>|</li>", "").replaceAll("<li>", "\n\n•");
+        String result = ""; // TODO Убрать костыль
 
-        Elements links = elements.get(0).getElementsByAttributeValue("class", "value").select("a");
+        try {
+            result = document.getElementsByAttributeValue("title", "Автор").select("a").toString() + elements.get(0).toString().replaceAll("<ul>|</ul>|</li>", "").replaceAll("<li>", "\n\n•");
 
-        linksArray = new String[links.size() + 1];
+            Elements links = elements.get(0).getElementsByAttributeValue("class", "value").select("a");
 
-//      Ищем ссылки, вытаскиваем их
-        linksArray[0] = document.getElementsByAttributeValue("title", "Автор").select("a").attr("abs:href");
-        for (int i = 1; i<=links.size(); i++) {
-        linksArray[i] = links.get(i-1).attr("abs:href");
+            linksArray = new String[links.size() + 1];
+
+            // Ищем ссылки, вытаскиваем их
+            // TODO Get rid of HARDCODE!
+            linksArray[0] = document.getElementsByAttributeValue("title", "Автор").select("a").attr("abs:href");
+            for (int i = 1; i <= links.size(); i++) {
+                linksArray[i] = links.get(i - 1).attr("abs:href");
+            }
+        } catch (IndexOutOfBoundsException e){
+            RoboErrorReporter.reportError(context, e);
+            Toast.makeText(context, context.getString(R.string.documentDownloadFailed), Toast.LENGTH_LONG).show();
         }
+
         return result;
     }
 

@@ -40,6 +40,7 @@ public class RecognizeUrl {
             case DownloadTask.TYPE_DUEL_ARTICLE: separator = DownloadTask.SEPARATOR_DUEL_ARTICLE; break;
             case DownloadTask.TYPE_PUBLICATIONS: separator = DownloadTask.SEPARATOR_PUBLICATIONS; break;
             case DownloadTask.TYPE_WRITERS: separator = DownloadTask.SEPARATOR_WRITERS; break;
+            case DownloadTask.TYPE_NEWS: separator = DownloadTask.SEPARATOR_NEWS; break;
         }
 
         return separator;

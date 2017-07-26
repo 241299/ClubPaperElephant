@@ -27,6 +27,14 @@ import ru.bibliowiki.litclubbs.lookandfeel.RecyclerViewAdapter;
 /**
  * @author by pf on 05.07.2016.
  */
+
+
+/**
+ * Запускает AsyncTask
+ * На вход: ссылка URL или HASH для кеша
+ * Выход: Document без преобразований
+ *
+ */
 public class DownloadTask extends AsyncTask<Void, Void, Void> {
 
     private final Context context;
@@ -44,17 +52,20 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     public static final int TYPE_USER = 6;
     public static final int TYPE_DUEL_ARTICLE = 7;
     public static final int TYPE_WRITERS = 8;
-    public static final int TYPE_RESERVED2 = 9;
-    public static final int TYPE_RESERVED3 = 10;
-    public static final int TYPE_RESERVED4 = 11;
+    //public static final int TYPE_RESERVED2 = 9;
+    //public static final int TYPE_RESERVED3 = 10;
+    //public static final int TYPE_RESERVED4 = 11;
     public static final int TYPE_UNKNOWN = 12;
     public static final int TYPE_VK = 13;
 
     public final static String SEPARATOR_DEFAULT = "item";
     public final static String SEPARATOR_PUBLICATIONS = "content_list_item articles_list_item";
-    public final static String SEPARATOR_ARTICLE = "field ft_html f_content";
-    public final static String SEPARATOR_DUEL_ARTICLE = "field ft_html f_content2";
+    public final static String SEPARATOR_ARTICLE = "field ft_html f_content auto_field";
+    public final static String SEPARATOR_DUEL_ARTICLE = "field ft_html f_content2 auto_field";
     public final static String SEPARATOR_WRITERS = "content_list_item writers_list_item";
+    public static final String SEPARATOR_NEWS = "field ft_html f_content none_field";
+
+
     private Document doc;
 
     @Override
@@ -85,11 +96,11 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
                 doc.select("div[class*=widget_profiles_list list").remove(); //Убрать "Авторы приглашают"
                 doc.select("ul[class*=menu").remove(); //Убрать пустые ссылки в конце страницы
 
-                e = doc.getElementsByAttributeValue("class", separatorUsed);
+                e = doc.getElementsByAttributeValue("class", separatorUsed); // TODO Basic List Parser
                 if (typeOfPage == TYPE_PUBLICATIONS) e.select("div.field.ft_text.f_teaser").remove();
 //                    e = doc.getElementsByTag("a");
             } else
-                RoboErrorReporter.reportError(context, new NullPointerException(context.getString(R.string.documentDownloadFailed)));
+                RoboErrorReporter.reportError(context, new NullPointerException(context.getString(R.string.documentDownloadFailed))); // TODO Change Errors
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,9 +116,10 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             Toast.makeText(context, context.getString(R.string.documentDownloadFailed), Toast.LENGTH_LONG).show();
             RoboErrorReporter.reportError(context, new NullPointerException(context.getString(R.string.documentDownloadFailed)));
             return;
-        }
+        } //TODO Change Errors
 
-        ((MenuActivity) context).setCurrentPageLoaded(url, typeOfPage, separatorUsed);
+
+        ((MenuActivity) context).setCurrentPageLoaded(url, typeOfPage, separatorUsed); // TODO Заменить на CurrentState.changeState()
 
         final LinearLayout linearLayout = (LinearLayout) ((AppCompatActivity) context).findViewById(R.id.linearLayout_menu);
 
@@ -115,8 +127,9 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             linearLayout.removeAllViews();
         }
 
-        if (typeOfPage != TYPE_ARTICLE && typeOfPage != TYPE_NEWS && typeOfPage != TYPE_DUEL_ARTICLE) {
+        if (typeOfPage != TYPE_ARTICLE && typeOfPage != TYPE_NEWS && typeOfPage != TYPE_DUEL_ARTICLE) { // TODO Заменить на отдельный метод
 
+            // TODO Basic List Parser
             RecyclerView recyclerView = new RecyclerView(context);
             RecyclerViewAdapter arrayAdapter = new RecyclerViewAdapter(context, e, typeOfPage);
             recyclerView.setAdapter(arrayAdapter);
@@ -137,7 +150,10 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
                 linearLayout.addView(swipeRefreshLayout);
             }
 
+            // END OF TODO Basic List Parser
+
         } else {
+            // TODO Article Parser
             TextView text = new TextView(context);
             text.setLinksClickable(true);
             text.setClickable(true);
@@ -156,9 +172,11 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
             Toolbar toolbar = (Toolbar) ((AppCompatActivity) context).findViewById(R.id.toolbar);
             if (toolbar!=null) toolbar.setTitle(doc.title());
 
+            // TODO Article Parser
         }
     }
 
+    // TODO Basic List Parser
     private void refreshItems(SwipeRefreshLayout swiper){
         MenuActivity link = (MenuActivity)context;
         (new DownloadTask(context, link.getCurrentUrlLoaded(), link.getCurrentTypeLoaded(), link.getCurrentSeparatorLoaded())).execute();
@@ -167,4 +185,5 @@ public class DownloadTask extends AsyncTask<Void, Void, Void> {
     private void onItemsLoadComplete(SwipeRefreshLayout swiper){
         swiper.setRefreshing(false);
     }
+    // END OF TODO Basic List Parser
 }

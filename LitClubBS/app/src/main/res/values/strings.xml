@@ -40,7 +40,7 @@
     <string name="refreshStarted">Refreshing…</string>
     <string name="defaultErrorMessage">An error has occurred</string>
     <string name="documentDownloadFailed">Page download failed</string>
-    <string name="unknownTypeOfTheLink">Sorry, this link can\'t be opened</string>
+    <string name="unknownTypeOfTheLink">Sorry, this link can\'t be opened yet</string>
     <string name="settings_header_text">Please, sign in</string>
     <string name="settings_password_txt">Password</string>
     <string name="settings_sign_in_btn_txt">Sign in</string>

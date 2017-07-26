@@ -111,11 +111,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onClick(View v) {
                 try {
                     String temp0 = elements.get(viewHolder.getAdapterPosition()).getElementsByTag("a").first().attr("abs:href");
-                    String selectedSeparator = DownloadTask.SEPARATOR_ARTICLE;
 
                     final int temp1 = RecognizeUrl.recognizeUrl(temp0);
-                    if (temp1 == DownloadTask.TYPE_DUEL_ARTICLE)
-                        selectedSeparator = DownloadTask.SEPARATOR_DUEL_ARTICLE;
+                    String selectedSeparator = RecognizeUrl.matchSeparatorToType(temp1);
+
                     (new DownloadTask(context, elements.get(viewHolder.getAdapterPosition()).getElementsByTag("a").first().attr("abs:href"), temp1, selectedSeparator)).execute();
                 } catch (Exception e) {
                     RoboErrorReporter.reportError(context, e);
